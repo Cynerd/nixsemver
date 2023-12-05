@@ -1,0 +1,14 @@
+include:
+    - 'https://gitlab.com/Cynerd/gitlab-ci-nix/-/raw/master/template.yml'
+
+check:
+    extends: .nix
+    script:
+      - nix flake check
+
+
+format:
+    extends: .nix
+    script:
+      - nix fmt
+
