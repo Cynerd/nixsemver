@@ -52,7 +52,7 @@ in rec {
     lr = latestRelease r;
     slr = semverSplit lr;
   in
-    if head r == "Unreleased"
+    if head r == "Unreleased" || sourceInfo ? "dirtyRev"
     then
       semverToString (slr
         // {
