@@ -10,5 +10,5 @@ check:
 format:
     extends: .nix
     script:
-      - nix fmt
+      - nix fmt .
 
