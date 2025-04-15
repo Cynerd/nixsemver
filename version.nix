@@ -1,6 +1,6 @@
-_: super: let
+final: prev: let
   inherit (builtins) match elemAt toString;
-  inherit (super) head toIntBase10;
+  inherit (prev) toIntBase10 optionalString;
 
   semverRegex = "(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(-((0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*)(\\.(0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*))*))?(\\+([0-9a-zA-Z-]+(\\.[0-9a-zA-Z-]+)*))?";
 in {
@@ -42,6 +42,6 @@ in {
   semverToString = semver:
     with semver;
       "${toString major}.${toString minor}.${toString patch}"
-      + (super.optionalString (preRelease != null) "-${preRelease}")
-      + (super.optionalString (build != null) "+${build}");
+      + (optionalString (preRelease != null) "-${preRelease}")
+      + (optionalString (build != null) "+${build}");
 }

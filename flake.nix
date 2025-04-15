@@ -6,28 +6,29 @@
   outputs = {
     self,
     nixpkgs,
-    flake-utils,
     flake-tests,
   }: let
+    inherit (nixpkgs.lib) genAttrs systems composeManyExtensions;
+
+    withPkgs = func:
+      genAttrs systems.flakeExposed (system:
+        func nixpkgs.legacyPackages.${system});
     fullLib = nixpkgs.lib.extend self.overlays.lib;
-  in
-    {
-      lib = self.overlays.lib fullLib nixpkgs.lib;
-      overlays.lib = final: prev:
-        import ./version.nix final prev
-        // {
-          changelog = import ./changelog.nix final prev;
-        };
-    }
-    // flake-utils.lib.eachDefaultSystem (system: let
-      pkgs = nixpkgs.legacyPackages.${system};
-    in {
-      checks = (import ./tests) (v:
+  in {
+    overlays.lib = composeManyExtensions [
+      (import ./version.nix)
+      (import ./changelog.nix)
+    ];
+    lib = self.overlays.lib fullLib nixpkgs.lib;
+
+    checks = withPkgs (pkgs:
+      import ./tests (v:
         flake-tests.lib.check {
           inherit pkgs;
           tests = v;
         })
-      fullLib;
-      formatter = pkgs.alejandra;
-    });
+      fullLib);
+
+    formatter = withPkgs (pkgs: pkgs.alejandra);
+  };
 }
