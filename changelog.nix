@@ -60,7 +60,7 @@ in {
             preRelease =
               (optionalString (slr.preRelease
                   != null) "${slr.preRelease}.")
-              + "${sourceInfo.shortRev or sourceInfo.dirtyShortRev}";
+              + "${sourceInfo.shortRev or sourceInfo.dirtyShortRev or ""}";
           })
       else lr;
   };
